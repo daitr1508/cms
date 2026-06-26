@@ -1,5 +1,7 @@
 package com.lms.cms.service;
 
+import com.lms.cms.dto.CourseRequestDTO;
+import com.lms.cms.dto.CourseRequestDtoTraditional;
 import com.lms.cms.entity.Course;
 import com.lms.cms.repository.CourseRepository;
 import org.springframework.stereotype.Service;
@@ -14,8 +16,18 @@ public class CourseService {
         this.courseRepository = courseRepository;
     }
 
-    public Course createCourse(Course course) {
-        return courseRepository.save(course);
+    public Course createCourse(CourseRequestDTO course) {
+        return courseRepository.save(mapToEntity(course));
+    }
+
+    private Course mapToEntity(CourseRequestDTO dto) {
+        Course course = new Course();
+
+        course.setName(dto.name());
+        course.setDescription(dto.description());
+        course.setPrice(dto.price());
+
+        return course;
     }
 
     public Course getCourseById(Long id) {
@@ -26,27 +38,27 @@ public class CourseService {
         return courseRepository.findAll();
     }
 
-    public Course updateCoursePartially(Long id, Course updatedCourse) {
+    public Course updateCoursePartially(Long id, CourseRequestDTO updatedCourse) {
         Course existingCourse = courseRepository.findById(id).get();
-        if(updatedCourse.getName() != null) {
-            existingCourse.setName(updatedCourse.getName());
+        if(updatedCourse.name() != null) {
+            existingCourse.setName(updatedCourse.name());
         }
-        if(updatedCourse.getDescription() != null) {
-            existingCourse.setDescription(updatedCourse.getDescription());
+        if(updatedCourse.description() != null) {
+            existingCourse.setDescription(updatedCourse.description());
         }
-        if(updatedCourse.getPrice() != null) {
-            existingCourse.setPrice(updatedCourse.getPrice());
+        if(updatedCourse.price() != null) {
+            existingCourse.setPrice(updatedCourse.price());
         }
 
         return courseRepository.save(existingCourse);
     }
 
-    public Course updateCourseCompletely(Long id, Course updatedCourse) {
+    public Course updateCourseCompletely(Long id, CourseRequestDTO updatedCourse) {
         Course existingCourse = courseRepository.findById(id).get();
 
-        existingCourse.setName(updatedCourse.getName());
-        existingCourse.setDescription(updatedCourse.getDescription());
-        existingCourse.setPrice(updatedCourse.getPrice());
+        existingCourse.setName(updatedCourse.name());
+        existingCourse.setDescription(updatedCourse.description());
+        existingCourse.setPrice(updatedCourse.price());
 
         return courseRepository.save(existingCourse);
     }

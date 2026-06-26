@@ -1,5 +1,6 @@
 package com.lms.cms.controller;
 
+import com.lms.cms.dto.CourseRequestDTO;
 import com.lms.cms.entity.Course;
 import com.lms.cms.service.CourseService;
 import java.util.List;
@@ -15,7 +16,7 @@ public class CourseController {
     }
 
     @PostMapping
-    public Course createCourse(@RequestBody Course course) {
+    public Course createCourse(@RequestBody CourseRequestDTO course) {
         return courseService.createCourse(course);
     }
 
@@ -30,12 +31,12 @@ public class CourseController {
     }
 
     @PatchMapping("/{id}")
-    public Course updateCoursePartially(@PathVariable Long id,@RequestBody Course updatedCourse) {
+    public Course updateCoursePartially(@PathVariable Long id,@RequestBody CourseRequestDTO updatedCourse) {
         return courseService.updateCoursePartially(id, updatedCourse);
     }
 
     @PutMapping("/{id}")
-    public Course updateCourseCompletely(@PathVariable Long id,@RequestBody Course updatedCourse) {
+    public Course updateCourseCompletely(@PathVariable Long id,@RequestBody CourseRequestDTO updatedCourse) {
         return courseService.updateCourseCompletely(id, updatedCourse);
     }
 
