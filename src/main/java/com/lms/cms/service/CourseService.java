@@ -3,6 +3,7 @@ package com.lms.cms.service;
 import com.lms.cms.dto.CourseRequestDTO;
 import com.lms.cms.dto.CourseRequestDtoTraditional;
 import com.lms.cms.entity.Course;
+import com.lms.cms.exception.CourseNotFoundException;
 import com.lms.cms.repository.CourseRepository;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,9 @@ public class CourseService {
     }
 
     public Course getCourseById(Long id) {
-        return courseRepository.findById(id).get();
+        return courseRepository.findById(id).orElseThrow(() -> new CourseNotFoundException(
+                "Course not found with id:" + id
+        ));
     }
 
     public List<Course> getAllCourses() {
