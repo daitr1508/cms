@@ -4,6 +4,8 @@ import com.lms.cms.dto.CourseRequestDTO;
 import com.lms.cms.entity.Course;
 import com.lms.cms.service.CourseService;
 import java.util.List;
+
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,7 +18,7 @@ public class CourseController {
     }
 
     @PostMapping
-    public Course createCourse(@RequestBody CourseRequestDTO course) {
+    public Course createCourse(@Valid @RequestBody CourseRequestDTO course) {
         return courseService.createCourse(course);
     }
 
