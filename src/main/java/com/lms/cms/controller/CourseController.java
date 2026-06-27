@@ -1,12 +1,15 @@
 package com.lms.cms.controller;
 
 import com.lms.cms.dto.CourseRequestDTO;
-import com.lms.cms.entity.Course;
+import com.lms.cms.dto.CourseResponseDTO;
 import com.lms.cms.service.CourseService;
-import java.util.List;
 
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/courses")
@@ -18,32 +21,35 @@ public class CourseController {
     }
 
     @PostMapping
-    public Course createCourse(@Valid @RequestBody CourseRequestDTO course) {
-        return courseService.createCourse(course);
+    public ResponseEntity<CourseResponseDTO> createCourse(@Valid @RequestBody CourseRequestDTO course) {
+        CourseResponseDTO createdCourse = courseService.createCourse(course);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
     }
 
     @GetMapping("/{id}")
-    public Course getCourseById(@PathVariable Long id) {
-        return courseService.getCourseById(id);
+    public ResponseEntity<CourseResponseDTO> getCourseById(@PathVariable Long id) {
+        return ResponseEntity.ok(courseService.getCourseById(id));
     }
 
     @GetMapping
-    public List<Course> getAllCourses() {
-        return courseService.getAllCourses();
+    public ResponseEntity<List<CourseResponseDTO>> getAllCourses() {
+        List<CourseResponseDTO> courses = courseService.getAllCourses();
+        return ResponseEntity.ok(courses);
     }
 
     @PatchMapping("/{id}")
-    public Course updateCoursePartially(@PathVariable Long id,@RequestBody CourseRequestDTO updatedCourse) {
-        return courseService.updateCoursePartially(id, updatedCourse);
+    public ResponseEntity<CourseResponseDTO> updateCoursePartially(@PathVariable Long id, @RequestBody CourseRequestDTO requestDTO) {
+        return ResponseEntity.ok(courseService.updateCoursePartially(id, requestDTO));
     }
 
     @PutMapping("/{id}")
-    public Course updateCourseCompletely(@PathVariable Long id,@RequestBody CourseRequestDTO updatedCourse) {
-        return courseService.updateCourseCompletely(id, updatedCourse);
+    public ResponseEntity<CourseResponseDTO> updateCourseCompletely(@PathVariable Long id, @Valid @RequestBody CourseRequestDTO requestDTO) {
+        return ResponseEntity.ok(courseService.updateCourseCompletely(id, requestDTO));
     }
 
     @DeleteMapping("/{id}")
-    public String deleteCourse(@PathVariable Long id) {
-        return courseService.deleteCourse(id);
+    public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
+        courseService.deleteCourse(id);
+        return ResponseEntity.noContent().build();
     }
 }

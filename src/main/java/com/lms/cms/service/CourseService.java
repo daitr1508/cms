@@ -1,7 +1,7 @@
 package com.lms.cms.service;
 
 import com.lms.cms.dto.CourseRequestDTO;
-import com.lms.cms.dto.CourseRequestDtoTraditional;
+import com.lms.cms.dto.CourseResponseDTO;
 import com.lms.cms.entity.Course;
 import com.lms.cms.exception.CourseNotFoundException;
 import com.lms.cms.repository.CourseRepository;
@@ -17,57 +17,51 @@ public class CourseService {
         this.courseRepository = courseRepository;
     }
 
-    public Course createCourse(CourseRequestDTO course) {
-        return courseRepository.save(mapToEntity(course));
+    public CourseResponseDTO createCourse(CourseRequestDTO dto) {
+        return CourseResponseDTO.from(courseRepository.save(mapToEntity(dto)));
+    }
+
+    public CourseResponseDTO getCourseById(Long id) {
+        return CourseResponseDTO.from(
+                courseRepository.findById(id).orElseThrow(() ->
+                        new CourseNotFoundException("Course not found with id:" + id))
+        );
+    }
+
+    public List<CourseResponseDTO> getAllCourses() {
+        return courseRepository.findAll().stream().map(CourseResponseDTO::from).toList();
+    }
+
+    public CourseResponseDTO updateCoursePartially(Long id, CourseRequestDTO dto) {
+        Course course = courseRepository.findById(id).orElseThrow(() ->
+                new CourseNotFoundException("Course not found with id:" + id));
+        if (dto.name() != null) course.setName(dto.name());
+        if (dto.description() != null) course.setDescription(dto.description());
+        if (dto.price() != null) course.setPrice(dto.price());
+        return CourseResponseDTO.from(courseRepository.save(course));
+    }
+
+    public CourseResponseDTO updateCourseCompletely(Long id, CourseRequestDTO dto) {
+        Course course = courseRepository.findById(id).orElseThrow(() ->
+                new CourseNotFoundException("Course not found with id:" + id));
+        course.setName(dto.name());
+        course.setDescription(dto.description());
+        course.setPrice(dto.price());
+        return CourseResponseDTO.from(courseRepository.save(course));
+    }
+
+    public String deleteCourse(Long id) {
+        courseRepository.findById(id).orElseThrow(() ->
+                new CourseNotFoundException("Course not found with id:" + id));
+        courseRepository.deleteById(id);
+        return "Course deleted successfully";
     }
 
     private Course mapToEntity(CourseRequestDTO dto) {
         Course course = new Course();
-
         course.setName(dto.name());
         course.setDescription(dto.description());
         course.setPrice(dto.price());
-
         return course;
-    }
-
-    public Course getCourseById(Long id) {
-        return courseRepository.findById(id).orElseThrow(() -> new CourseNotFoundException(
-                "Course not found with id:" + id
-        ));
-    }
-
-    public List<Course> getAllCourses() {
-        return courseRepository.findAll();
-    }
-
-    public Course updateCoursePartially(Long id, CourseRequestDTO updatedCourse) {
-        Course existingCourse = courseRepository.findById(id).get();
-        if(updatedCourse.name() != null) {
-            existingCourse.setName(updatedCourse.name());
-        }
-        if(updatedCourse.description() != null) {
-            existingCourse.setDescription(updatedCourse.description());
-        }
-        if(updatedCourse.price() != null) {
-            existingCourse.setPrice(updatedCourse.price());
-        }
-
-        return courseRepository.save(existingCourse);
-    }
-
-    public Course updateCourseCompletely(Long id, CourseRequestDTO updatedCourse) {
-        Course existingCourse = courseRepository.findById(id).get();
-
-        existingCourse.setName(updatedCourse.name());
-        existingCourse.setDescription(updatedCourse.description());
-        existingCourse.setPrice(updatedCourse.price());
-
-        return courseRepository.save(existingCourse);
-    }
-
-    public String deleteCourse(Long id) {
-        courseRepository.deleteById(id);
-        return "Course deleted successfully";
     }
 }
